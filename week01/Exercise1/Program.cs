@@ -1,5 +1,3 @@
-using System;
-
 class Program
 {
     static void Main(string[] args)
@@ -10,6 +8,6 @@ class Program
         Console.WriteLine("what is your last name");
         string lastName = Console.ReadLine();
         Console.WriteLine($"your name is {firstName} {lastName} {firstName}");
-        
+
     }
 }
