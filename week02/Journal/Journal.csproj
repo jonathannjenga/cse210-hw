@@ -9,3 +9,72 @@
   </PropertyGroup>
 
 </Project>
+using System;
+using System.Collections.Generic;
+
+public abstract class Entry
+{
+    public string? Date { get; set; }
+    public string? Content { get; set;}    
+    public abstract void Display();
+}
+
+
+public class JournalEntry : Entry
+{
+    public override void Display()
+    {
+        Console.WriteLine($"[{Date}] {Content}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Welcome to My Journal App!");
+
+        List<Entry> journal = new List<Entry>();
+
+        while (true)
+        {
+            Console.WriteLine("\nChoose an option:");
+            Console.WriteLine("1. Write new entry");
+            Console.WriteLine("2. View all entries");
+            Console.WriteLine("3. Exit");
+
+            string? choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                Console.Write("Enter your entry: ");
+                string? content = Console.ReadLine();
+
+                journal.Add(new JournalEntry
+                {
+                    Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    Content = content
+                });
+
+                Console.WriteLine("✅ Entry saved!");
+            }
+            else if (choice == "2")
+            {
+                Console.WriteLine("\n📖 Journal Entries:");
+                foreach (var entry in journal)
+                {
+                    entry.Display();
+                }
+            }
+            else if (choice == "3")
+            {
+                Console.WriteLine("Goodbye!");
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid option, try again.");
+            }
+        }
+    }
+}
