@@ -51,6 +51,7 @@ public class Product
 
     public double GetTotalCost()
     {
+
         return _price * _quantity;
     }
 
@@ -115,8 +116,7 @@ public class Customer
         return _address.IsInUSA();
     }
 }
-using System.Collections.Generic;
-using System.Text;
+
 
 public class Order
 {
@@ -142,7 +142,7 @@ public class Order
             total += product.GetTotalCost();
         }
 
-        // Add shipping cost
+        
         total += _customer.IsInUSA() ? 5 : 35;
         return total;
     }
