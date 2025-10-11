@@ -5,34 +5,35 @@ class Program
         Console.WriteLine("Hello World! This is the OnlineOrdering Project.");
     }
 }
-       static void Main(string[] args)
-    {
-        
-        Address address1 = new Address("123 Main St", "Dallas", "TX", "USA");
-        Address address2 = new Address("456 King Rd", "Toronto", "ON", "Canada");
 
-        
-        Customer customer1 = new Customer("John Smith", address1);
-        Customer customer2 = new Customer("Alice Brown", address2);
-        Order order1 = new Order(customer1);
-        order1.AddProduct(new Product("Wireless Mouse", "P1001", 25.99, 2));
-        order1.AddProduct(new Product("Keyboard", "P1002", 45.50, 1));
 
-        Order order2 = new Order(customer2);
-        order2.AddProduct(new Product("USB Hub", "P2001", 15.75, 3));
-        order2.AddProduct(new Product("Laptop Stand", "P2002", 32.99, 1));
-        order2.AddProduct(new Product("Webcam", "P2003", 49.95, 1));
-        Console.WriteLine("===== ORDER 1 =====");
-        Console.WriteLine(order1.GetPackingLabel());
-        Console.WriteLine(order1.GetShippingLabel());
-        Console.WriteLine($"Total Price: ${order1.GetTotalCost():F2}\n");
 
-        Console.WriteLine("===== ORDER 2 =====");
-        Console.WriteLine(order2.GetPackingLabel());
-        Console.WriteLine(order2.GetShippingLabel());
-        Console.WriteLine($"Total Price: ${order2.GetTotalCost():F2}\n");
-    }
+
+
+    Address address1 = new Address("123 Main St", "Dallas", "TX", "USA");
+    Address address2 = new Address("456 King Rd", "Toronto", "ON", "Canada");
+    Customer customer1 = new Customer("John Smith", address1);
+    Customer customer2 = new Customer("Alice Brown", address2);
+    Order order1 = new Order(customer1);
+    order1.AddProduct(new Product("Wireless Mouse", "P1001", 25.99, 2));
+    order1.AddProduct(new Product("Keyboard", "P1002", 45.50, 1));
+
+    Order order2 = new Order(customer2);
+    order2.AddProduct(new Product("USB Hub", "P2001", 15.75, 3));
+    order2.AddProduct(new Product("Laptop Stand", "P2002", 32.99, 1));
+    order2.AddProduct(new Product("Webcam", "P2003", 49.95, 1));
+    {Console.WriteLine("===== ORDER 1 =====");
+    Console.WriteLine(order1.GetPackingLabel());
+    Console.WriteLine(order1.GetShippingLabel());
+    Console.WriteLine($"Total Price: ${order1.GetTotalCost():F2}\n");
+
+    Console.WriteLine("===== ORDER 2 =====");
+    Console.WriteLine(order2.GetPackingLabel());
+    Console.WriteLine(order2.GetShippingLabel());
+    Console.WriteLine($"Total Price: ${order2.GetTotalCost():F2}\n");
 }
+
+
 public class Product
 {
     private string _name;
