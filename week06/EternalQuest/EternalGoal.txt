@@ -1,0 +1,25 @@
+class EternalGoal : Goal
+{
+    public EternalGoal(string name, string description, int points)
+        : base(name, description, points)
+    { }
+
+    public override string GetDetailsString()
+    {
+        return $"[∞] {Name} ({Description}) - {Points} pts per completion";
+    }
+
+    public override int RecordEvent()
+    {
+        
+        Console.WriteLine($"Recorded '{Name}'. You earned {Points} points.");
+        return Points;
+    }
+
+    public override string Serialize()
+    {
+        
+        return $"Eternal|{Escape(Name)}|{Escape(Description)}|{Points}";
+    }
+}
+

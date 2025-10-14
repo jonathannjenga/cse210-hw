@@ -1,0 +1,85 @@
+class GoalManager
+{
+    private List<Goal> _goals = new List<Goal>();
+    private int _score = 0;
+
+    
+    private int _level = 1;
+    private List<string> _badges = new List<string>();
+
+    
+    private int PointsToNextLevel => 1000 * _level;
+
+    public int Score => _score;
+    public IReadOnlyList<Goal> Goals => _goals.AsReadOnly();
+    public int Level => _level;
+    public IReadOnlyList<string> Badges => _badges.AsReadOnly();
+
+    public void AddGoal(Goal g) => _goals.Add(g);
+
+    public void ShowGoals()
+    {
+        Console.WriteLine("\nYour Goals:");
+        for (int i = 0; i < _goals.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {_goals[i].GetDetailsString()}");
+        }
+        Console.WriteLine();
+    }
+
+    public void RecordEventForGoal(int index)
+    {
+        if (index < 0 || index >= _goals.Count)
+        {
+            Console.WriteLine("Invalid goal index.");
+            return;
+        }
+
+        var g = _goals[index];
+        int earned = g.RecordEvent();
+        if (earned > 0)
+        {
+            AddPoints(earned);
+        }
+    }
+private void AddPoints(int points)
+    {
+        _score += points;
+        Console.WriteLine($"Total score: {_score} points.");
+        CheckLevelUp();
+        CheckBadges();
+    }
+
+    // Simple leveling system
+    private void CheckLevelUp()
+    {
+        while (_score >= PointsToNextLevel)
+        {
+            _level++;
+            Console.WriteLine($"Congratulations! You reached level {_level}!");
+        }
+    }
+
+    private void CheckBadges()
+    {
+        
+        if (_score >= 1000 && !_badges.Contains("1000 Points"))
+        {
+            _badges.Add("1000 Points");
+            Console.WriteLine("Badge earned: 1000 Points!");
+        }
+        if (_level >= 5 && !_badges.Contains("Level 5"))
+        {
+            _badges.Add("Level 5");
+            Console.WriteLine("Badge earned: Level 5!");
+        }
+        
+        foreach (var g in _goals)
+        {
+            if (g is ChecklistGoal cg && cg.GetDetailsString().Contains("[X]") && !_badges.Contains("Checklist Completed"))
+            {
+                _badges.Add("Checklist Completed");
+                Console.WriteLine("Badge earned: Checklist Completed!");
+            }
+        }
+    }

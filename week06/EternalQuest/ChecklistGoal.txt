@@ -1,0 +1,63 @@
+class ChecklistGoal : Goal
+{
+    private int _timesCompleted;
+    private int _target;
+    private int _bonus;
+
+    
+    public ChecklistGoal(string name, string description, int points, int target, int bonus)
+        : base(name, description, points)
+    {
+        _target = target;
+        _bonus = bonus;
+        _timesCompleted = 0;
+    }
+
+    
+    public ChecklistGoal(string name, string description, int points, int target, int bonus, int timesCompleted)
+        : base(name, description, points)
+    {
+        _target = target;
+        _bonus = bonus;
+        _timesCompleted = timesCompleted;
+    }
+
+    public override string GetDetailsString()
+    {
+        var status = IsComplete ? "[X]" : "[ ]";
+        return $"{status} {Name} ({Description}) - {Points} pts each, Completed {_timesCompleted}/{_target}";
+    }
+
+    public bool IsComplete => _timesCompleted >= _target;
+
+    public override int RecordEvent()
+    {
+        if (IsComplete)
+        {
+            Console.WriteLine("This checklist goal is already complete.");
+            return 0;
+        }
+
+        _timesCompleted++;
+        int earned = Points;
+
+        if (IsComplete)
+        {
+            earned += _bonus;
+            Console.WriteLine($"You completed '{Name}' for the {_target}th time and earned {Points} + bonus { _bonus } = {earned} points! Goal is now complete.");
+        }
+        else
+        {
+            Console.WriteLine($"Recorded '{Name}'. You earned {Points} points. Progress: {_timesCompleted}/{_target}");
+        }
+
+        return earned;
+    }
+
+    public override string Serialize()
+    {
+        
+        return $"Checklist|{Escape(Name)}|{Escape(Description)}|{Points}|{_timesCompleted}|{_target}|{_bonus}";
+    }
+}
+
