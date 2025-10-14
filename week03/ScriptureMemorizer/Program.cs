@@ -5,3 +5,88 @@ class Program
         Console.WriteLine("Hello World! This is the ScriptureMemorizer Project.");
     }
 }
+public class Reference 
+{ public string Book { get; private set; } 
+public int Chapter { get; private set; } 
+public int VerseStart { get; private set; }
+ public int? VerseEnd { get; private set; } 
+ (string book, int chapter, int verse)
+  { 
+    Book = book; 
+    Chapter = chapter; 
+    VerseStart = verse; 
+    VerseEnd = null;
+ }
+  Book = book;
+   Chapter = chapter;
+    VerseStart = verse; 
+    VerseEnd = null; 
+    
+    
+    { Book = book; 
+    Chapter = chapter; 
+    VerseStart = verseStart; 
+    VerseEnd = verseEnd;
+     }
+      public override string ToString() 
+      { if (VerseEnd == null) return $"{Book} {Chapter}:{VerseStart}";
+       else 
+       return $"{Book} {Chapter}:{VerseStart}-{VerseEnd}";
+        } 
+        } 
+        public class Word
+         {
+           private string _text;
+            private bool _isHidden;
+             public Word(string text)
+              { 
+                _text = text;
+               _isHidden = false;
+                }
+                 public void Hide()
+                  { 
+                    _isHidden = true;
+                     }
+                      public bool IsHidden()
+                       { 
+                        return _isHidden;
+                         } 
+                         public string Display()
+                          { 
+                            return _isHidden ? new string('_', _text.Length) : _text; 
+                            } 
+                            } 
+                            public class Scripture
+                             { 
+                              private Reference _reference;
+                               private List<Word> _words;
+                                public Scripture(Reference reference, string text)
+                                 {
+                                   _reference = reference;
+                                    _words = text.Split(" ").Select(word => new Word(word)).ToList();
+                                     } 
+                                     public void Display() 
+                                     {
+                                       Console.WriteLine(_reference.ToString());
+                                        foreach (var word in _words) { Console.Write(word.Display() + " "); 
+                                        } 
+                                        Console.WriteLine("\n"); 
+                                        } 
+                                        public bool AllWordsHidden() 
+                                        {
+                                           return _words.All(w => w.IsHidden());
+                                            } 
+                                            public void HideRandomWords(int count)
+                                            
+                                             { Random rand = new Random();
+                                              int hidden = 0;
+                                               List<Word> visibleWords = _words.Where(w => !w.IsHidden()).ToList();
+                                                while (hidden < count && visibleWords.Count > 0) 
+                                                { 
+                                                  int index = rand.Next(visibleWords.Count);
+                                                   visibleWords[index].Hide(); 
+                                                   visibleWords.RemoveAt(index); hidden++; 
+                                                   } 
+                                                   } 
+                                                   } 
+                                                   
