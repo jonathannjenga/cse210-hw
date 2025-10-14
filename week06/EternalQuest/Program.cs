@@ -16,9 +16,7 @@ abstract class Goal
     // Common fields that are encapsulated
     private string _name;
     private string _description;
-    private int _points; // points awarded per completion event (for simple, eternal, or each checklist tick)
-
-    // Expose read-only properties where appropriate
+    private int _points; 
     public string Name => _name;
     public string Description => _description;
     public int Points => _points;
@@ -30,25 +28,23 @@ abstract class Goal
         _points = points;
     }
 
-    // Return a display string for list of goals. Derived classes can override for extra info.
+    
     public virtual string GetDetailsString()
     {
-        // Default: show name, description, point value
+        
         return $"{Name} ({Description}) - {Points} pts each";
     }
 
-    // Abstract method forces derived classes to implement how they record an event
-    // and return how many points the user earned as a result of this record.
+    
     public abstract int RecordEvent();
 
-    // Save format (derived classes append their own fields)
-    // e.g. Simple|Name|Desc|Points|IsComplete
+    
     public abstract string Serialize();
 
-    // Optional factory parse method to reconstruct from saved text
+    
     public static Goal Deserialize(string line)
     {
-        // Format: Type|Name|Description|Points|other...
+        
         var parts = SplitPreservePipes(line);
         if (parts.Length < 4)
             throw new FormatException("Invalid save line: " + line);
@@ -67,7 +63,7 @@ abstract class Goal
                 return new SimpleGoal(name, desc, points, isComplete);
 
             case "Eternal":
-                // Eternal has no additional state
+                
                 return new EternalGoal(name, desc, points);
 
             case "Checklist":
@@ -84,12 +80,12 @@ abstract class Goal
         }
     }
 
-    // Helpers for escaping pipes and splitting lines safely
+    
     protected static string Escape(string s) => s?.Replace("|", "&#124;") ?? "";
     protected static string Unescape(string s) => s?.Replace("&#124;", "|") ?? "";
     protected static string[] SplitPreservePipes(string line)
     {
-        // Simple split, then unescape later; caller will unescape individual fields
+        
         return line.Split('|');
     }
 }
