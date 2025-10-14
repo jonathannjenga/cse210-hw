@@ -4,14 +4,14 @@ using System.IO;
 
 
 
-class Program
+
 {
     static void Main(string[] args)
     {
         Console.WriteLine("Hello World! This is the EternalQuest Project.");
     }
 }
-class Program
+class program
 {
     static void Main(string[] args)
     {
