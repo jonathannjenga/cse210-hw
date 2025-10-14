@@ -1,19 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 class GoalManager
 {
     private List<Goal> _goals = new List<Goal>();
     private int _score = 0;
-
-    
     private int _level = 1;
     private List<string> _badges = new List<string>();
 
-    
     private int PointsToNextLevel => 1000 * _level;
-
-    public int Score => _score;
-    public IReadOnlyList<Goal> Goals => _goals.AsReadOnly();
-    public int Level => _level;
-    public IReadOnlyList<string> Badges => _badges.AsReadOnly();
 
     public void AddGoal(Goal g) => _goals.Add(g);
 
@@ -21,9 +18,7 @@ class GoalManager
     {
         Console.WriteLine("\nYour Goals:");
         for (int i = 0; i < _goals.Count; i++)
-        {
             Console.WriteLine($"{i + 1}. {_goals[i].GetDetailsString()}");
-        }
         Console.WriteLine();
     }
 
@@ -37,12 +32,10 @@ class GoalManager
 
         var g = _goals[index];
         int earned = g.RecordEvent();
-        if (earned > 0)
-        {
-            AddPoints(earned);
-        }
+        if (earned > 0) AddPoints(earned);
     }
-private void AddPoints(int points)
+
+    private void AddPoints(int points)
     {
         _score += points;
         Console.WriteLine($"Total score: {_score} points.");
@@ -50,36 +43,80 @@ private void AddPoints(int points)
         CheckBadges();
     }
 
-    // Simple leveling system
     private void CheckLevelUp()
     {
         while (_score >= PointsToNextLevel)
         {
             _level++;
-            Console.WriteLine($"Congratulations! You reached level {_level}!");
+            Console.WriteLine($"🎉 Level Up! You reached level {_level}!");
         }
     }
 
     private void CheckBadges()
     {
-        
         if (_score >= 1000 && !_badges.Contains("1000 Points"))
         {
             _badges.Add("1000 Points");
-            Console.WriteLine("Badge earned: 1000 Points!");
+            Console.WriteLine("🏅 Badge earned: 1000 Points!");
         }
         if (_level >= 5 && !_badges.Contains("Level 5"))
         {
             _badges.Add("Level 5");
-            Console.WriteLine("Badge earned: Level 5!");
-        }
-        
-        foreach (var g in _goals)
-        {
-            if (g is ChecklistGoal cg && cg.GetDetailsString().Contains("[X]") && !_badges.Contains("Checklist Completed"))
-            {
-                _badges.Add("Checklist Completed");
-                Console.WriteLine("Badge earned: Checklist Completed!");
-            }
+            Console.WriteLine("🏅 Badge earned: Level 5!");
         }
     }
+
+    public void SaveToFile(string path)
+    {
+        using (var sw = new StreamWriter(path))
+        {
+            sw.WriteLine($"Header|{_score}|{_level}|{string.Join(";", _badges)}");
+            foreach (var g in _goals)
+                sw.WriteLine(g.Serialize());
+        }
+        Console.WriteLine($"Saved to {path}");
+    }
+
+    public void LoadFromFile(string path)
+    {
+        if (!File.Exists(path))
+        {
+            Console.WriteLine("Save file not found.");
+            return;
+        }
+
+        _goals.Clear();
+        _score = 0;
+        _level = 1;
+        _badges.Clear();
+
+        var lines = File.ReadAllLines(path);
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            var parts = line.Split('|');
+            if (parts[0] == "Header")
+            {
+                if (parts.Length >= 3)
+                {
+                    if (int.TryParse(parts[1], out int sc)) _score = sc;
+                    if (int.TryParse(parts[2], out int lv)) _level = lv;
+                    if (parts.Length >= 4 && !string.IsNullOrEmpty(parts[3]))
+                        _badges = parts[3].Split(';').ToList();
+                }
+            }
+            else
+            {
+                var g = Goal.Deserialize(line);
+                _goals.Add(g);
+            }
+        }
+        Console.WriteLine($"Loaded {_goals.Count} goals from {path}. Score: {_score}, Level: {_level}");
+    }
+
+    public void ShowStatus()
+    {
+        Console.WriteLine($"\nScore: {_score} | Level: {_level}");
+        Console.WriteLine(_badges.Count > 0 ? "Badges: " + string.Join(", ", _badges) : "No badges yet");
+    }
+}

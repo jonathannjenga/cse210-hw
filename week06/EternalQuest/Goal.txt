@@ -1,0 +1,69 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+abstract class Goal
+{
+    private string _name;
+    private string _description;
+    private int _points;
+
+    public string Name => _name;
+    public string Description => _description;
+    public int Points => _points;
+
+    protected Goal(string name, string description, int points)
+    {
+        _name = name;
+        _description = description;
+        _points = points;
+    }
+
+    public virtual string GetDetailsString()
+    {
+        return $"{Name} ({Description}) - {Points} pts each";
+    }
+
+    public abstract int RecordEvent();
+    public abstract string Serialize();
+
+    public static Goal Deserialize(string line)
+    {
+        var parts = SplitPreservePipes(line);
+        if (parts.Length < 4)
+            throw new FormatException("Invalid save line: " + line);
+
+        var type = parts[0];
+        var name = Unescape(parts[1]);
+        var desc = Unescape(parts[2]);
+        if (!int.TryParse(parts[3], out int points))
+            throw new FormatException("Invalid points: " + parts[3]);
+
+        switch (type)
+        {
+            case "Simple":
+                if (parts.Length < 5 || !bool.TryParse(parts[4], out bool isComplete))
+                    throw new FormatException("Invalid SimpleGoal line.");
+                return new SimpleGoal(name, desc, points, isComplete);
+
+            case "Eternal":
+                return new EternalGoal(name, desc, points);
+
+            case "Checklist":
+                if (parts.Length < 7)
+                    throw new FormatException("Invalid ChecklistGoal line.");
+                if (!int.TryParse(parts[4], out int timesCompleted)) throw new FormatException();
+                if (!int.TryParse(parts[5], out int target)) throw new FormatException();
+                if (!int.TryParse(parts[6], out int bonus)) throw new FormatException();
+                return new ChecklistGoal(name, desc, points, target, bonus, timesCompleted);
+
+            default:
+                throw new NotSupportedException("Unknown goal type: " + type);
+        }
+    }
+
+    protected static string Escape(string s) => s?.Replace("|", "&#124;") ?? "";
+    protected static string Unescape(string s) => s?.Replace("&#124;", "|") ?? "";
+    protected static string[] SplitPreservePipes(string line) => line.Split('|');
+}
